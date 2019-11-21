@@ -63,18 +63,18 @@ export class CanvasToBMP {
         // DIB header
         setU32(DIBHeaderSize);             // header size
         setU32(w);
-        setU32(- h >>> 0);        // negative = top-to-bottom
+        setU32(h >>> 0);        // negative = bottom-to-top
         setU16(1);               // 1 plane
         setU16(24);              // 24-bits (RGB)
         setU32(0);               // no compression (BI_BITFIELDS, 3)
         setU32(pixelArraySize);  // bitmap size incl. padding (stride x height)
-        setU32(0x232e);            // pixels/meter h
-        setU32(0x232e);            // pixels/meter v
+        setU32(0x2e23);            // pixels/meter h (~72 DPI x 39.3701 inch/m)
+        setU32(0x2e23);            // pixels/meter v
         pos += 8;                // skip color/important colors
 
         // bitmap data, change order of ABGR to BGR
         for (let y = 0; y < h; y++) {
-            const p = headerSize + DIBHeaderSize + (y * stride); // offset + stride x height
+            const p = headerSize + DIBHeaderSize + ((h - y - 1) * stride); // offset + stride x height
             for (let x = 0; x < w3; x += 3) {
                 const v = data32[s++];                     // get ABGR
 
@@ -82,7 +82,7 @@ export class CanvasToBMP {
                 const g = (v >>> 8) % 256;
                 const b = (v >>> 16) % 256;
 
-                view.setUint8(p + x, b);                  // red channel
+                view.setUint8(p + x, b);                      // red channel
                 view.setUint8(p + x + 1, g);                  // green channel
                 view.setUint8(p + x + 2, r);                  // blue channel
             }
