@@ -46,7 +46,7 @@ export class CanvasToBMP {
 
             headerSize = 14,
             DIBHeaderSize = 40,
-            stride = Math.floor((24 * w + 23) / 24) * 3, // row length incl. padding
+            stride = Math.floor((24 * w + 31) / 32 ) * 4, // row length incl. padding
             pixelArraySize = stride * h,                 // total bitmap size
             fileLength = headerSize + DIBHeaderSize + pixelArraySize,           // header size is known + bitmap
 
